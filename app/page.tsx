@@ -1,5 +1,5 @@
 import Image from "next/image";
-
+import GoogleDriveSelector from "./components/GoogleDriveSelector";
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
@@ -7,10 +7,13 @@ export default function Home() {
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
             <span className="block">PDF Lens</span>
-            <span className="block text-blue-600 dark:text-blue-400 mt-2">Organize your PDF files effortlessly</span>
+            <span className="block text-blue-600 dark:text-blue-400 mt-2">
+              Organize your PDF files effortlessly
+            </span>
           </h1>
           <p className="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-gray-300 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            Connect your Google Drive, select your PDF folder, and enhance your documents with powerful metadata management.
+            Connect your Google Drive, select your PDF folder, and enhance your
+            documents with powerful metadata management.
           </p>
           <GoogleDriveSelector />
         </div>
@@ -22,20 +25,32 @@ export default function Home() {
           <div className="mt-10 grid grid-cols-1 gap-10 sm:grid-cols-3">
             <div className="text-center">
               <div className="rounded-lg bg-gray-100 dark:bg-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">1. Connect</h3>
-                <p className="mt-2 text-gray-500 dark:text-gray-300">Securely connect your Google Drive account</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  1. Connect
+                </h3>
+                <p className="mt-2 text-gray-500 dark:text-gray-300">
+                  Securely connect your Google Drive account
+                </p>
               </div>
             </div>
             <div className="text-center">
               <div className="rounded-lg bg-gray-100 dark:bg-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">2. Select</h3>
-                <p className="mt-2 text-gray-500 dark:text-gray-300">Choose the folder containing your PDF files</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  2. Select
+                </h3>
+                <p className="mt-2 text-gray-500 dark:text-gray-300">
+                  Choose the folder containing your PDF files
+                </p>
               </div>
             </div>
             <div className="text-center">
               <div className="rounded-lg bg-gray-100 dark:bg-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">3. Manage</h3>
-                <p className="mt-2 text-gray-500 dark:text-gray-300">Add and organize metadata for your documents</p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  3. Manage
+                </h3>
+                <p className="mt-2 text-gray-500 dark:text-gray-300">
+                  Add and organize metadata for your documents
+                </p>
               </div>
             </div>
           </div>
