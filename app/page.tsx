@@ -1,5 +1,5 @@
 import Image from "next/image";
-import GoogleDriveSelector from "./components/GoogleDriveSelector";
+import GoogleDriveSelector from "@/app/components/GoogleDriveSelector";
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
@@ -15,7 +15,9 @@ export default function Home() {
             Connect your Google Drive, select your PDF folder, and enhance your
             documents with powerful metadata management.
           </p>
-          <GoogleDriveSelector />
+          <GoogleDriveSelector onFolderSelect={(folderId) => {
+            console.log('Selected folder:', folderId);
+          }} />
         </div>
 
         <div className="mt-20">
