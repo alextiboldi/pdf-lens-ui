@@ -9,6 +9,16 @@ import { Textarea } from "@/components/ui/textarea";
 import GoogleDriveSelector from './GoogleDriveSelector';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import Image from 'next/image';
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  name: z.string().min(1, "Project name is required"),
+  description: z.string(),
+  datasource: z.string().min(1, "Please select a data source"),
+  folderId: z.string().optional()
+});
 
 const dataSources = [
   {
@@ -35,25 +45,26 @@ const dataSources = [
 ];
 
 export default function CreateProject() {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [selectedSource, setSelectedSource] = useState('');
   const [selectedFolder, setSelectedFolder] = useState('');
+  
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      datasource: '',
+      folderId: ''
+    }
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name,
-          description,
-          datasource: selectedSource,
-          folderId: selectedFolder
-        }),
+        body: JSON.stringify(values),
       });
       
       if (!response.ok) {
@@ -76,76 +87,99 @@ export default function CreateProject() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <FormItem>
-              <FormLabel>Project Name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter project name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </FormControl>
-            </FormItem>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter project name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe your project"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="min-h-[100px]"
-                />
-              </FormControl>
-            </FormItem>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Describe your project"
+                        className="min-h-[100px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="space-y-4">
-              <FormLabel>Select Data Source</FormLabel>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {dataSources.map((source) => (
-                  <Card
+                  <div
                     key={source.id}
-                    className={`cursor-pointer transition-all ${
-                      !source.active && 'opacity-50'
-                    } ${
-                      selectedSource === source.id
-                        ? 'border-blue-500 shadow-lg'
-                        : 'hover:border-gray-300'
-                    }`}
-                    onClick={() => source.active && setSelectedSource(source.id)}
+                    className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+                      form.watch('datasource') === source.id
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary'
+                    } ${!source.active && 'opacity-50 cursor-not-allowed'}`}
+                    onClick={() => {
+                      if (source.active) {
+                        form.setValue('datasource', source.id);
+                      }
+                    }}
                   >
-                    <CardContent className="p-6 text-center">
+                    <div className="flex items-center gap-3">
                       <Image
                         src={source.icon}
                         alt={source.name}
-                        width={40}
-                        height={40}
-                        className="mx-auto mb-4"
+                        width={24}
+                        height={24}
                       />
-                      <h3 className="font-semibold mb-2">{source.name}</h3>
-                      <p className="text-sm text-gray-500">{source.description}</p>
-                    </CardContent>
-                  </Card>
+                      <h3 className="font-medium">{source.name}</h3>
+                    </div>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {source.description}
+                    </p>
+                  </div>
                 ))}
               </div>
-            </div>
 
-            {selectedSource === 'google-drive' && (
-              <div className="mt-6">
-                <GoogleDriveSelector />
-              </div>
-            )}
+              {form.watch('datasource') === 'google-drive' && (
+                <div className="mt-4">
+                  <FormField
+                    control={form.control}
+                    name="folderId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Select Folder</FormLabel>
+                        <FormControl>
+                          <GoogleDriveSelector
+                            onFolderSelect={(folderId) => {
+                              field.onChange(folderId);
+                              setSelectedFolder(folderId);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
 
-            <Button
-              type="submit"
-              className="w-full"
-              size="lg"
-            >
-              Create Project
-            </Button>
-          </form>
+              <Button type="submit" className="w-full" size="lg">
+                Create Project
+              </Button>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>
