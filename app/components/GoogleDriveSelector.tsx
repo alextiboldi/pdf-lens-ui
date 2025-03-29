@@ -14,6 +14,37 @@ export default function GoogleDriveSelector() {
   const [selectedFolder, setSelectedFolder] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/check');
+        const { authenticated } = await response.json();
+        setIsAuthenticated(authenticated);
+        if (authenticated) {
+          fetchFolders();
+        }
+      } catch (error) {
+        console.error('Failed to check auth:', error);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  const fetchFolders = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/drive/folders');
+      const data = await response.json();
+      setFolders(data.folders);
+    } catch (error) {
+      console.error('Failed to fetch folders:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleConnect = async () => {
     try {
       setLoading(true);
