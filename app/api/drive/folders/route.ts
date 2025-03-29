@@ -9,7 +9,7 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.REDIRECT_URI
 );
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token');
@@ -23,7 +23,7 @@ export async function GET() {
     });
 
     const drive = google.drive({ version: 'v3', auth: oauth2Client });
-    
+    const url = new URL(request.url);
     const parentId = url.searchParams.get('parentId') || 'root';
     const query = parentId === 'root' 
       ? "mimeType='application/vnd.google-apps.folder' and 'root' in parents"
@@ -38,7 +38,7 @@ export async function GET() {
     return NextResponse.json({
       folders: response.data.files || []
     });
-    
+
   } catch (error) {
     console.error('Failed to fetch folders:', error);
     return NextResponse.json(
