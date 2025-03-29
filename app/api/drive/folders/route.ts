@@ -1,7 +1,7 @@
 
 import { google } from 'googleapis';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -11,10 +11,10 @@ const oauth2Client = new google.auth.OAuth2(
 
 export async function GET(request: Request) {
   try {
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     const accessToken = cookieStore.get('access_token');
 
-    if (!accessToken?.value) {
+    if (!accessToken) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
@@ -23,8 +23,10 @@ export async function GET(request: Request) {
     });
 
     const drive = google.drive({ version: 'v3', auth: oauth2Client });
-    const url = new URL(request.url);
-    const parentId = url.searchParams.get('parentId') || 'root';
+    
+    const { searchParams } = new URL(request.url);
+    const parentId = searchParams.get('parentId') || 'root';
+    
     const query = parentId === 'root' 
       ? "mimeType='application/vnd.google-apps.folder' and 'root' in parents"
       : `mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents`;
@@ -35,15 +37,9 @@ export async function GET(request: Request) {
       spaces: 'drive'
     });
 
-    return NextResponse.json({
-      folders: response.data.files || []
-    });
-
+    return NextResponse.json({ folders: response.data.files || [] });
   } catch (error) {
     console.error('Failed to fetch folders:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch folders' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch folders' }, { status: 500 });
   }
 }
