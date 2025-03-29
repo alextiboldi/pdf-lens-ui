@@ -2,27 +2,35 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import GoogleDriveSelector from './GoogleDriveSelector';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import Image from 'next/image';
 
 const dataSources = [
   {
     id: 'google-drive',
     name: 'Google Drive',
     icon: '/globe.svg',
-    active: true
+    active: true,
+    description: 'Connect and manage your Google Drive files'
   },
   {
     id: 'google-bucket',
     name: 'Google Bucket',
     icon: '/window.svg',
-    active: false
+    active: false,
+    description: 'Store and retrieve files from Google Cloud Storage'
   },
   {
     id: 'aws-s3',
     name: 'AWS S3',
     icon: '/file.svg',
-    active: false
+    active: false,
+    description: 'Leverage Amazon S3 for file storage'
   }
 ];
 
@@ -30,6 +38,7 @@ export default function CreateProject() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedSource, setSelectedSource] = useState('');
+  const [selectedFolder, setSelectedFolder] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,71 +67,87 @@ export default function CreateProject() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Create New Project</h1>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium mb-2">
-            Project Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium mb-2">
-            Description
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
-            rows={4}
-          />
-        </div>
-        <div>
-          <h3 className="text-lg font-medium mb-4">Select Data Source</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {dataSources.map((source) => (
-              <button
-                key={source.id}
-                type="button"
-                disabled={!source.active}
-                onClick={() => setSelectedSource(source.id)}
-                className={`p-4 border rounded-lg text-center ${
-                  source.active ? 'hover:border-blue-500' : 'opacity-50 cursor-not-allowed'
-                } ${selectedSource === source.id ? 'border-blue-500' : ''}`}
-              >
-                <Image
-                  src={source.icon}
-                  alt={source.name}
-                  width={40}
-                  height={40}
-                  className="mx-auto mb-2"
+    <div className="max-w-4xl mx-auto p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-3xl">Create New Project</CardTitle>
+          <CardDescription>
+            Set up a new project and connect your preferred data source
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <FormItem>
+              <FormLabel>Project Name</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter project name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
                 />
-                <span className="block text-sm">{source.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        {selectedSource === 'google-drive' && (
-          <div className="mt-6">
-            <GoogleDriveSelector />
-          </div>
-        )}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-        >
-          Create Project
-        </button>
-      </form>
+              </FormControl>
+            </FormItem>
+
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Describe your project"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </FormControl>
+            </FormItem>
+
+            <div className="space-y-4">
+              <FormLabel>Select Data Source</FormLabel>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {dataSources.map((source) => (
+                  <Card
+                    key={source.id}
+                    className={`cursor-pointer transition-all ${
+                      !source.active && 'opacity-50'
+                    } ${
+                      selectedSource === source.id
+                        ? 'border-blue-500 shadow-lg'
+                        : 'hover:border-gray-300'
+                    }`}
+                    onClick={() => source.active && setSelectedSource(source.id)}
+                  >
+                    <CardContent className="p-6 text-center">
+                      <Image
+                        src={source.icon}
+                        alt={source.name}
+                        width={40}
+                        height={40}
+                        className="mx-auto mb-4"
+                      />
+                      <h3 className="font-semibold mb-2">{source.name}</h3>
+                      <p className="text-sm text-gray-500">{source.description}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {selectedSource === 'google-drive' && (
+              <div className="mt-6">
+                <GoogleDriveSelector />
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full"
+              size="lg"
+            >
+              Create Project
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
