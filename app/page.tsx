@@ -15,9 +15,6 @@ export default function Home() {
             Connect your Google Drive, select your PDF folder, and enhance your
             documents with powerful metadata management.
           </p>
-          <GoogleDriveSelector onFolderSelect={(folderId) => {
-            console.log('Selected folder:', folderId);
-          }} />
         </div>
 
         <div className="mt-20">
