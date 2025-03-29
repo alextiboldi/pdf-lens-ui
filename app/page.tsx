@@ -12,14 +12,7 @@ export default function Home() {
           <p className="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-gray-300 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
             Connect your Google Drive, select your PDF folder, and enhance your documents with powerful metadata management.
           </p>
-          <div className="mt-10 flex justify-center gap-4">
-            <button className="rounded-md bg-blue-600 px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-              Connect Google Drive
-            </button>
-            <button className="rounded-md bg-gray-100 dark:bg-gray-700 px-6 py-3 text-lg font-semibold text-gray-900 dark:text-white shadow-sm hover:bg-gray-200 dark:hover:bg-gray-600">
-              Learn More
-            </button>
-          </div>
+          <GoogleDriveSelector />
         </div>
 
         <div className="mt-20">
