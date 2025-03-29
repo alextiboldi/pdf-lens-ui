@@ -24,8 +24,13 @@ export async function GET() {
 
     const drive = google.drive({ version: 'v3', auth: oauth2Client });
     
+    const parentId = url.searchParams.get('parentId') || 'root';
+    const query = parentId === 'root' 
+      ? "mimeType='application/vnd.google-apps.folder' and 'root' in parents"
+      : `mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents`;
+
     const response = await drive.files.list({
-      q: "mimeType='application/vnd.google-apps.folder'",
+      q: query,
       fields: 'files(id, name)',
       spaces: 'drive'
     });
