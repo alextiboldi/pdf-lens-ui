@@ -33,7 +33,28 @@ export default function CreateProject() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement project creation
+    try {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          description,
+          datasource: selectedSource,
+          folderId: selectedFolder
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create project');
+      }
+
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating project:', error);
+    }
   };
 
   return (
