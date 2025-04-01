@@ -1,20 +1,28 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const cookieStore = cookies();
+    const accessToken = cookieStore.get('access_token');
+    
     const project = await prisma.project.create({
       data: {
         name: body.name,
         description: body.description,
         datasource: body.datasource,
-        folderId: body.folderId
+        folderId: body.folderId,
+        accessToken: accessToken?.value,
+        // Set expiry to 1 hour from now as per Google's default
+        tokenExpiry: new Date(Date.now() + 3600000)
       }
     });
     return NextResponse.json(project);
   } catch (error) {
+    console.error('Error creating project:', error);
     return NextResponse.json({ error: 'Failed to create project' }, { status: 500 });
   }
 }
