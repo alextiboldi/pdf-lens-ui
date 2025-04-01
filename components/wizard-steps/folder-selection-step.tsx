@@ -41,7 +41,13 @@ export default function FolderSelectionStep({
         if (authenticated) {
           fetchFolders("root");
         } else {
-          await handleConnect({}); // Pass empty object initially
+          const searchParams = new URLSearchParams(window.location.search);
+          const projectDetails = {
+            name: searchParams.get('name') || '',
+            description: searchParams.get('description') || '',
+            dataSource: searchParams.get('dataSource') || '',
+          };
+          await handleConnect(projectDetails);
         }
       } catch (error) {
         console.error("Failed to check auth:", error);
