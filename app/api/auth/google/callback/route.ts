@@ -28,6 +28,15 @@ export async function GET(request: Request) {
       sameSite: "lax",
       maxAge: 3600, // 1 hour
     });
+    
+    if (tokens.refresh_token) {
+      cookieStore.set("refresh_token", tokens.refresh_token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+      });
+    }
 
     // Redirect back to home page
     return NextResponse.redirect(new URL("/", request.url));
