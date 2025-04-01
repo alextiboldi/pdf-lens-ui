@@ -41,16 +41,17 @@ export default function FolderSelectionStep({
         if (authenticated) {
           fetchFolders("root");
         } else {
-          await handleConnect();
+          await handleConnect({}); // Pass empty object initially
         }
       } catch (error) {
         console.error("Failed to check auth:", error);
       }
     };
-    const handleConnect = async () => {
+    const handleConnect = async (projectDetails: any) => {
       try {
         setLoading(true);
-        const response = await fetch("/api/auth/google");
+        const params = new URLSearchParams(projectDetails);
+        const response = await fetch(`/api/auth/google?${params}`);
         const auth = await response.json();
 
         if (auth.url) {
@@ -80,21 +81,6 @@ export default function FolderSelectionStep({
     }
   };
 
-  // const handleConnect = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await fetch("/api/auth/google");
-  //     const auth = await response.json();
-
-  //     if (auth.url) {
-  //       window.location.href = auth.url;
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to connect:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleFolderClick = (folder: string) => {
     setSelectedFolder(folder);
@@ -106,7 +92,7 @@ export default function FolderSelectionStep({
   };
   const handleBackClick = () => {
     if (folderStack.length > 1) {
-      const previousFolder = folderStack[folderStack.length - 1];
+      const previousFolder = folderStack[folderStack.length - 2];
       setFolderStack((prev) => prev.slice(0, -1));
       fetchFolders(previousFolder);
       setSelectedFolder("");

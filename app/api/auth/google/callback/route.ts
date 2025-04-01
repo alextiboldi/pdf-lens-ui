@@ -38,8 +38,14 @@ export async function GET(request: Request) {
       });
     }
 
-    // Redirect back to home page
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    // Get the state parameter containing project details
+    const state = url.searchParams.get("state") || "";
+    const projectParams = new URLSearchParams(state);
+    
+    // Redirect back to the wizard with project details
+    const redirectUrl = new URL("/dashboard", request.url);
+    redirectUrl.search = projectParams.toString();
+    return NextResponse.redirect(redirectUrl);
   } catch (error) {
     console.error("OAuth callback error:", error);
     return NextResponse.json(

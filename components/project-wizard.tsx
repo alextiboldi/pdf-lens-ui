@@ -15,11 +15,29 @@ export interface ProjectDetails {
 }
 
 export default function ProjectWizard() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [projectDetails, setProjectDetails] = useState<ProjectDetails>({
-    name: "",
-    description: "",
-    dataSource: null,
+  const [currentStep, setCurrentStep] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      return params.has('name') ? 1 : 0;
+    }
+    return 0;
+  });
+  const [projectDetails, setProjectDetails] = useState<ProjectDetails>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('name')) {
+        return {
+          name: params.get('name') || '',
+          description: params.get('description') || '',
+          dataSource: (params.get('dataSource') as DataSource) || null,
+        };
+      }
+    }
+    return {
+      name: "",
+      description: "",
+      dataSource: null,
+    };
   });
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
 
