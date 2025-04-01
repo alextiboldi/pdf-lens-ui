@@ -35,20 +35,39 @@ export default function ProjectWizard() {
     setSelectedFolder(null);
   };
 
-  const handleComplete = () => {
-    // Here you would typically submit the project data to your backend
-    console.log("Project created:", {
-      ...projectDetails,
-      folder: selectedFolder,
-    });
-    // Reset the form
-    setProjectDetails({
-      name: "",
-      description: "",
-      dataSource: null,
-    });
-    setSelectedFolder(null);
-    setCurrentStep(0);
+  const handleComplete = async () => {
+    try {
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: projectDetails.name,
+          description: projectDetails.description,
+          datasource: projectDetails.dataSource,
+          folderId: selectedFolder,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create project");
+      }
+
+      // Reset the form after successful creation
+      setProjectDetails({
+        name: "",
+        description: "",
+        dataSource: null,
+      });
+      setSelectedFolder(null);
+      setCurrentStep(0);
+      
+      // Redirect to projects page
+      window.location.href = "/projects";
+    } catch (error) {
+      console.error("Error creating project:", error);
+    }
   };
 
   return (
