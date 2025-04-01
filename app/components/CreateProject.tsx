@@ -1,14 +1,26 @@
+"use client";
 
-'use client';
-
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import GoogleDriveSelector from './GoogleDriveSelector';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import Image from 'next/image';
+import GoogleDriveSelector from "./GoogleDriveSelector";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,63 +29,63 @@ const formSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   description: z.string(),
   datasource: z.string().min(1, "Please select a data source"),
-  folderId: z.string().optional()
+  folderId: z.string().optional(),
 });
 
 const dataSources = [
   {
-    id: 'google-drive',
-    name: 'Google Drive',
-    icon: '/globe.svg',
+    id: "google-drive",
+    name: "Google Drive",
+    icon: "/globe.svg",
     active: true,
-    description: 'Connect and manage your Google Drive files'
+    description: "Connect and manage your Google Drive files",
   },
   {
-    id: 'google-bucket',
-    name: 'Google Bucket',
-    icon: '/window.svg',
+    id: "google-bucket",
+    name: "Google Bucket",
+    icon: "/window.svg",
     active: false,
-    description: 'Store and retrieve files from Google Cloud Storage'
+    description: "Store and retrieve files from Google Cloud Storage",
   },
   {
-    id: 'aws-s3',
-    name: 'AWS S3',
-    icon: '/file.svg',
+    id: "aws-s3",
+    name: "AWS S3",
+    icon: "/file.svg",
     active: false,
-    description: 'Leverage Amazon S3 for file storage'
-  }
+    description: "Leverage Amazon S3 for file storage",
+  },
 ];
 
 export default function CreateProject() {
-  const [selectedFolder, setSelectedFolder] = useState('');
-  
+  const [selectedFolder, setSelectedFolder] = useState("");
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      datasource: '',
-      folderId: ''
-    }
+      name: "",
+      description: "",
+      datasource: "",
+      folderId: "",
+    },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await fetch('/api/projects', {
-        method: 'POST',
+      const response = await fetch("/api/projects", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to create project');
+        throw new Error("Failed to create project");
       }
 
       window.location.reload();
     } catch (error) {
-      console.error('Error creating project:', error);
+      console.error("Error creating project:", error);
     }
   };
 
@@ -126,13 +138,13 @@ export default function CreateProject() {
                   <div
                     key={source.id}
                     className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                      form.watch('datasource') === source.id
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:border-primary'
-                    } ${!source.active && 'opacity-50 cursor-not-allowed'}`}
+                      form.watch("datasource") === source.id
+                        ? "border-primary bg-primary/10"
+                        : "border-border hover:border-primary"
+                    } ${!source.active && "opacity-50 cursor-not-allowed"}`}
                     onClick={() => {
                       if (source.active) {
-                        form.setValue('datasource', source.id);
+                        form.setValue("datasource", source.id);
                       }
                     }}
                   >
@@ -152,7 +164,7 @@ export default function CreateProject() {
                 ))}
               </div>
 
-              {form.watch('datasource') === 'google-drive' && (
+              {form.watch("datasource") === "google-drive" && (
                 <div className="mt-4">
                   <FormField
                     control={form.control}

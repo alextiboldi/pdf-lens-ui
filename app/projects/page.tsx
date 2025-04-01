@@ -1,9 +1,8 @@
+"use client";
 
-'use client';
-
-import { useState, useEffect } from 'react';
-import CreateProject from '../components/CreateProject';
-import ProjectCard from '../components/ProjectCard';
+import { useState, useEffect } from "react";
+import CreateProject from "../components/CreateProject";
+import ProjectCard from "../components/ProjectCard";
 
 interface Project {
   id: string;
@@ -14,15 +13,15 @@ interface Project {
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/projects');
+        const response = await fetch("/api/projects");
         const data = await response.json();
         setProjects(data);
       } catch (error) {
-        console.error('Failed to fetch projects:', error);
+        console.error("Failed to fetch projects:", error);
       }
     };
     fetchProjects();
