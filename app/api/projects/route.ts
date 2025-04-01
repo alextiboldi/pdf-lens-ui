@@ -8,6 +8,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const cookieStore = cookies();
     const accessToken = cookieStore.get('access_token');
+    const refreshToken = cookieStore.get('refresh_token');
     
     const project = await prisma.project.create({
       data: {
@@ -16,6 +17,7 @@ export async function POST(request: Request) {
         datasource: body.datasource,
         folderId: body.folderId,
         accessToken: accessToken?.value,
+        refreshToken: refreshToken?.value,
         // Set expiry to 1 hour from now as per Google's default
         tokenExpiry: new Date(Date.now() + 3600000)
       }
