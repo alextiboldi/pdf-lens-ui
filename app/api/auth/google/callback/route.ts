@@ -28,7 +28,7 @@ export async function GET(request: Request) {
       sameSite: "lax",
       maxAge: 3600, // 1 hour
     });
-    
+
     if (tokens.refresh_token) {
       cookieStore.set("refresh_token", tokens.refresh_token, {
         httpOnly: true,
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     }
 
     // Redirect back to home page
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   } catch (error) {
     console.error("OAuth callback error:", error);
     return NextResponse.json(
